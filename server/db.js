@@ -89,6 +89,56 @@ function initDB() {
       resolved INTEGER DEFAULT 0
     );
 
+    CREATE TABLE IF NOT EXISTS game_transactions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      wallet_id TEXT NOT NULL REFERENCES wallets(id),
+      external_tx_id TEXT UNIQUE,
+      round_id TEXT,
+      game_id TEXT,
+      type TEXT NOT NULL,
+      amount REAL NOT NULL,
+      currency TEXT DEFAULT 'USD',
+      status TEXT DEFAULT 'completed',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS game_sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      game_id TEXT NOT NULL,
+      session_id TEXT,
+      mode TEXT DEFAULT 'real',
+      started_at TEXT DEFAULT (datetime('now')),
+      ended_at TEXT,
+      total_bet REAL DEFAULT 0,
+      total_win REAL DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS cached_games (
+      external_id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      provider TEXT,
+      category TEXT,
+      type TEXT,
+      rtp REAL,
+      volatility TEXT,
+      thumbnail TEXT,
+      has_demo INTEGER DEFAULT 0,
+      is_new INTEGER DEFAULT 0,
+      is_popular INTEGER DEFAULT 0,
+      min_bet REAL,
+      max_bet REAL,
+      cached_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_game_tx_user ON game_transactions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_game_tx_round ON game_transactions(round_id);
+    CREATE INDEX IF NOT EXISTS idx_game_tx_external ON game_transactions(external_tx_id);
+    CREATE INDEX IF NOT EXISTS idx_game_sessions_user ON game_sessions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_cached_games_type ON cached_games(type);
+    CREATE INDEX IF NOT EXISTS idx_cached_games_provider ON cached_games(provider);
+
     CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
     CREATE INDEX IF NOT EXISTS idx_wallets_user ON wallets(user_id);
     CREATE INDEX IF NOT EXISTS idx_transactions_user ON transactions(user_id);

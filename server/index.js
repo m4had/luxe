@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const walletRoutes = require('./routes/wallet');
 const adminRoutes = require('./routes/admin');
 const responsibleRoutes = require('./routes/responsible');
+const gameRoutes = require('./routes/games');
 const { fraudDetection } = require('./middleware/fraud');
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/wallet', walletRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/responsible', responsibleRoutes);
+app.use('/api/v1/games', gameRoutes);
 
 // Health
 app.get('/api/v1/health', (_, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
